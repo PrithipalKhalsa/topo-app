@@ -601,12 +601,19 @@ DrawingBoard.Board.prototype = {
 			this.coords.oldMid = currentMid;
 		} */
 		if (this.isDrawing){
-			var currentMid = this._getMidInputCoords(this.coords.current);
+			var currentMid = this._getInputCoords(this.coords.current);
+			
 			this.ctx.beginPath();
 			this.ctx.moveTo(currentMid.x, currentMid.y);
-			this.ctx.lineTo(this.coords.old.x, this.coords.old.y, this.coords.oldMid.x, this.coords.oldMid.y);
-			this.ctx.stroke()
+			this.ctx.lineTo(this.coords.current.x, this.coords.current.y);
+			if ('board:stopDrawing')
+			   this.ctx.stroke();
+		    
+			
+			//this.coords.old = this.coords.current;
+			//this.coords.oldMid = currentMid;
 		}
+	     	
 
 		if (window.requestAnimationFrame) requestAnimationFrame( $.proxy(function() { this.draw(); }, this) );
 	},
@@ -661,32 +668,7 @@ DrawingBoard.Board.prototype = {
 
 		this.ev.trigger('board:mouseOut', {e: e, coords: coords});
 	},
-	_getOutputCoords:function(e){
-		e = e.originalEvent ? e.originalEvent : e;
-		var
-			rect = this.canvas.getBoundingClientRect(),
-			width = this.dom.$canvas.width(),
-			height = this.dom.$canvas.height()
-		;
-		var x, y;
-		if (e.touches && e.touches.length == 1) {
-			x = e.touches[0].pageX;
-			y = e.touches[0].pageY;
-		} else {
-			x = e.pageX;
-			y = e.pageY;
-		}
-		x = x - this.dom.$canvas.offset().left;
-		y = y - this.dom.$canvas.offset().top;
-		x *= (width / rect.width);
-		y *= (height / rect.height);
-		return {
-			x: x,
-			y: y
-		};
-		
-	},
-	
+
 	_getInputCoords: function(e) {
 		e = e.originalEvent ? e.originalEvent : e;
 		var
@@ -711,8 +693,6 @@ DrawingBoard.Board.prototype = {
 			y: y
 		};
 	},
-	
-	
 	
 	
 	_getMidInputCoords: function(coords) {
