@@ -1,6 +1,6 @@
 DrawingBoard.Control.Linetool = DrawingBoard.Control.extend({
 
-	name: 'lineto',
+	name: 'linetool',
 
 	defaults: {
 		pencil: true,
@@ -30,7 +30,7 @@ DrawingBoard.Control.Linetool = DrawingBoard.Control.extend({
 			this.toggleButtons(mode);
 		}, this));
 
-		this.board.ev.bind('board:')
+		this.board.ev.bind('board:');
 
 		this.toggleButtons( this.board.getMode() );
 	},

@@ -74,7 +74,7 @@ DrawingBoard.Board = function(id, opts) {
 
 
 DrawingBoard.Board.defaultOpts = {
-	controls: ['Color', 'DrawingMode', 'Linemode', 'Size', 'Navigation'],
+	controls: ['Color', 'DrawingMode', 'linetool', 'Size', 'Navigation'],
 	controlsPosition: "top left",
 	color: "#000000",
 	size: 1,
@@ -425,11 +425,26 @@ DrawingBoard.Board.prototype = {
 		newMode = newMode || 'pencil';
 
 		this.ev.unbind('board:startDrawing', $.proxy(this.fill, this));
+		this.ev.unbind('board:startDrawing', $.proxy(this.line, this));
+		this.ev.unbind('board:startDrawing', $.proxy(this.draw, this));
 
+
+		if (newMode === "linetool")
+			this.ev.bind('board:startDrawing', $.proxy(this.line, this));
+			
+		if (newMode === "pencil"){
+			this.ev.bind('board:startDrawing', $.proxy(this.draw, this));
+		}
+		
+		if (newMode === "filler")
+			this.ev.bind('board:startDrawing', $.proxy(this.fill, this));
+				
 		if (this.opts.eraserColor === "transparent")
 			this.ctx.globalCompositeOperation = newMode === "eraser" ? "destination-out" : "source-over";
 		else {
 			if (newMode === "eraser") {
+				this.ev.bind('board:startDrawing', $.proxy(this.draw, this));
+				this.ev.bind('board:Drawing', $.proxy(this.draw, this));
 				if (this.opts.eraserColor === "background" && DrawingBoard.Utils.isColor(this.opts.background))
 					this.ctx.strokeStyle = this.opts.background;
 				else if (DrawingBoard.Utils.isColor(this.opts.eraserColor))
@@ -438,9 +453,9 @@ DrawingBoard.Board.prototype = {
 				this.ctx.strokeStyle = this.color;
 			}
 
-			if (newMode === "filler")
-				this.ev.bind('board:startDrawing', $.proxy(this.fill, this));
+		
 		}
+		
 		this.mode = newMode;
 		if (!silent)
 			this.ev.trigger('board:mode', this.mode);
@@ -533,7 +548,29 @@ DrawingBoard.Board.prototype = {
 
 		this.ctx.putImageData(img, 0, 0);
 	},
+	
+	line: function(e){
+		
+		if (this.isDrawing) {
+			var currentMid = this._getMidInputCoords(this.coords.current);
+			this.ctx.beginPath();
+			this.ctx.moveTo(currentMid.x, currentMid.y);
+			this.ctx.lineTo(this.coords.old.x, this.coords.old.y, this.coords.oldMid.x, this.coords.oldMid.y);
+			this.ctx.closePath();
+			this.ctx.stroke();
+			this.coords.old = this.coords.current;
+			this.coords.oldMid = currentMid;
+		}
+	
+		
+		
 
+		if (window.requestAnimationFrame && this.mode  === 'linetool') {
+			requestAnimationFrame( $.proxy(function() { this.line(); }, this) );
+		}
+		console.log("fuckadoo poopoo");
+		
+	},
 
 	/**
 	 * Drawing handling, with mouse or touch
@@ -543,7 +580,7 @@ DrawingBoard.Board.prototype = {
 		this.isDrawing = false;
 		this.isMouseHovering = false;
 		this.coords = {};
-		this.coords.old = this.coords.current = this.coords.oldMid = { x: 0, y: 0 };
+		this.coords.old = this.coords.current = this.coords.oldMid= this.coords.line =this.coords.linestart= { x: 0, y: 0 };
 
 		this.dom.$canvas.on('mousedown touchstart', $.proxy(function(e) {
 			this._onInputStart(e, this._getInputCoords(e) );
@@ -574,7 +611,7 @@ DrawingBoard.Board.prototype = {
 			this.isDrawing = false;
 		}, this));
 
-		if (window.requestAnimationFrame) requestAnimationFrame( $.proxy(this.draw, this) );
+	//	if (window.requestAnimationFrame) requestAnimationFrame( $.proxy(this.draw, this) );
 	},
 
 	draw: function() {
@@ -590,7 +627,7 @@ DrawingBoard.Board.prototype = {
 			this.dom.$cursor.addClass('drawing-board-utils-hidden');
 		}
 
-		/* if (this.isDrawing && (this.getMode() =='pencil'||this.getMode() =='eraser')) {
+		if (this.isDrawing) {
 			var currentMid = this._getMidInputCoords(this.coords.current);
 			this.ctx.beginPath();
 			this.ctx.moveTo(currentMid.x, currentMid.y);
@@ -599,32 +636,21 @@ DrawingBoard.Board.prototype = {
 
 			this.coords.old = this.coords.current;
 			this.coords.oldMid = currentMid;
-		} */
-		if (this.isDrawing){
-			var currentMid = this._getInputCoords(this.coords.current);
-			
-			this.ctx.beginPath();
-			this.ctx.moveTo(currentMid.x, currentMid.y);
-			this.ctx.lineTo(this.coords.current.x, this.coords.current.y);
-			if ('board:stopDrawing')
-			   this.ctx.stroke();
-		    
-			
-			//this.coords.old = this.coords.current;
-			//this.coords.oldMid = currentMid;
 		}
-	     	
-
-		if (window.requestAnimationFrame) requestAnimationFrame( $.proxy(function() { this.draw(); }, this) );
+		
+		
+		if (window.requestAnimationFrame && ((this.mode  === 'pencil') || (this.mode ==='eraser'))) {
+			requestAnimationFrame( $.proxy(function() { this.draw(); }, this) );
+		}
+		
+		
 	},
-
-
+	
 	_onInputStart: function(e, coords) {
 		this.coords.current = this.coords.old = coords;
 		this.coords.oldMid = this._getMidInputCoords(coords);
 		this.isDrawing = true;
 
-		if (!window.requestAnimationFrame) this.draw();
 
 		this.ev.trigger('board:startDrawing', {e: e, coords: coords});
 		e.stopPropagation();
@@ -635,7 +661,7 @@ DrawingBoard.Board.prototype = {
 		this.coords.current = coords;
 		this.ev.trigger('board:drawing', {e: e, coords: coords});
 
-		if (!window.requestAnimationFrame) this.draw();
+	
 
 		e.stopPropagation();
 		e.preventDefault();
@@ -644,7 +670,6 @@ DrawingBoard.Board.prototype = {
 	_onInputStop: function(e, coords) {
 		if (this.isDrawing && (!e.touches || e.touches.length === 0)) {
 			this.isDrawing = false;
-
 			this.saveWebStorage();
 			this.saveHistory();
 
@@ -694,7 +719,7 @@ DrawingBoard.Board.prototype = {
 		};
 	},
 	
-	
+
 	_getMidInputCoords: function(coords) {
 		return {
 			x: this.coords.old.x + coords.x>>1,
