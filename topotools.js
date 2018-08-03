@@ -77,14 +77,15 @@ app.get("/", function (req, res) {
 });
 
 app.get("/topo/:climbid/version/:version", function (req, res) {
-  var table = "Climbs";
   var params = {
-    TableName: table,
-    KeyConditionExpression: 'HashKey = :ClimbNumber and RangeKey < :Version',
+    TableName: "Climbs",
+    KeyConditionExpression: "ClimbNumber = :a",
+     ExpressionAttributeNames:{
+     ":a": "climb"
+     },
     ExpressionAttributeValues: {
-    ':ClimbNumber': req.params.climbid,
-    ':Version': req.params.version
-   }
+        ":climb": req.params.climbid
+    }
 };
   ddb.query(params, function(err, data) {
    if (err) console.log(err, err.stack); // an error occurred
