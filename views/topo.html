@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Literally Canvas</title>
+    <link href="literallycanvas.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+
+    <style type="text/css">
+      .hidden {
+        display: none;
+      }
+    
+      .fs-container {
+        width: 320px;
+        margin: auto;
+      }
+
+      .literally {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      
+      form {
+        width: 100px;
+      }
+      
+      input {
+        display: block;
+        margin-bottom: 10px;
+        padding: 5px;
+        width: 100%;
+        border: 1px solid lightgrey;
+        border-radius: 3px;
+        font-size: 16px;
+      }
+      
+      button {
+        font-size: 16px;
+        border-radius: 3px;
+        background-color: lightgrey;
+        border: 1px solid grey;
+        box-shadow: 2px 2px teal;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: yellow;
+      }
+      
+      button:active {
+        box-shadow: none;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    
+    <!-- you really ought to include react-dom, but for react 0.14 you don't strictly have to. -->
+    <script type="text/javascript" src="react-0.14.3.js"></script>
+    <script type="text/javascript" src="literallycanvas.js"></script>
+    <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.279.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    
+    <div class="fs-container">
+      <div id="lc"></div>
+    </div>
+  
+    <script type="text/javascript">
+     function getUrlVars() {
+      var vars = {};
+      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+          vars[key] = value;
+      });
+      return vars;
+    }
+    //console.log(getUrlVars);
+     fetch('/topo/-1881447683/version/1').then(function(response) {
+          console.log(response.topoData);
+        });
+      var lc = LC.init(document.getElementById("lc"), {
+          keyboardShortcuts: false,
+          tools: [LC.tools.Pencil, LC.tools.Eraser, LC.tools.Line,
+          LC.tools.Text, LC.tools.Pan],
+          imageURLPrefix: '../_assets/lc-images',
+          toolbarPosition: 'bottom',
+          defaultStrokeWidth: 1,
+          strokeWidths: [1]
+      });
+      
+      const getTopo = () => JSON.stringify(lc.getSnapshot(['shapes', 'imageSize', 'colors', 'position', 'scale', 'backgroundShapes']));
+      
+      const setTopo = function() {
+        const topoTarget = document.getElementById('topoTarget');
+        topoTarget.value = getTopo();
+      }
+      
+      // document.getElementById("jsonTopoData").innerHTML = getTopo();
+      
+      setInterval(setTopo, 1000);
+      
+      const submitTopo = document.getElementById('submitTopo');
+      
+      submitTopo.addEventListener('click', setTopo);
+      
+    </script> 
+  
+    <div id="contact">
+      
+    <form action="https://84113db646b54538946028a66c8c1196.vfs.cloud9.us-west-2.amazonaws.com/savetopo" method="post">
+         
+          <fieldset>
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" placeholder="Enter your full name" />
+  
+              <label for="routename">routename</label>
+              <input type="text" id="routename" name="routename" placeholder="Enter the route name" />
+
+              
+              <label for="json" class="hidden">topojson</label>
+              <input id="topoTarget" class="hidden" type="textarea" name="topojson"/>
+  
+              <input id="submitTopo" type="submit" value="Submit Topo" />
+  
+          </fieldset>
+      </form>
+      <div>
+    <script src="client.js"></script>
+  </body>
+</html>
