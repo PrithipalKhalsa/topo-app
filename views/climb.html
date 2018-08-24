@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Literally Canvas</title>
+    <link href="literallycanvas.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+
+    <link rel="stylesheet" type="text/css" href="index.css"/>    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  </head>
+
+  <body>
+    
+    <!-- you really ought to include react-dom, but for react 0.14 you don't strictly have to. -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js" type="text/javascript"></script>
+    <script type="text/javascript" src="literallycanvas.js"  type="text/javascript"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    
+    
+       <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h4 class="text-white">Welcome!</h4>
+              <p class="text-muted">The information on this site is purely user maintained and may not be accurate. </p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-4">
+              <h4 class="text-white">Contact</h4>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-white">Follow on Twitter</a></li>
+                <li><a href="#" class="text-white">Like on Facebook</a></li>
+                <li><a href="#" class="text-white">Email me</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <a href="/#" class="navbar-brand d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <strong>MamaTopos</strong>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+     
+    
+    
+    
+    
+    
+    <h1 id="routenameheader"></h1>
+    <h3 id="verheader"><h3>
+    <h3 id="name"><h3>
+    <div class="fs-container">
+      <div id="lc"></div>
+    </div>
+    <script type="text/javascript">
+      function getUrlVars() {
+          topoVars = {};
+          var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+          topoVars[key] = value;
+      });
+      return topoVars;
+    }
+    var urlTopoVars = getUrlVars();
+    //if urlTopovars
+    //then render topo array
+    //else render new topo
+    
+        // loading a preexisting topo
+        var lc = LC.init(document.getElementById("lc"), {
+            keyboardShortcuts: false,
+            tools: [LC.tools.Pencil, LC.tools.Eraser, LC.tools.Line,
+            LC.tools.Text, LC.tools.Pan],
+            imageURLPrefix: 'lc-images',
+            toolbarPosition: 'bottom',
+            defaultStrokeWidth: 1,
+            strokeWidths: [1]
+        });
+        
+        
+         
+      async function getArrayOfTopos(id) {
+        const response = await fetch('topo/'+id, {});
+        const json = await response.json();
+        return json.result;
+      } 
+     
+      var arrayOfTopos;
+      
+      getArrayOfTopos(urlTopoVars.id).then(function(results) {
+         $('lc').ready(function() {
+          lc.loadSnapshot(JSON.parse(results[results.length-1].JSONtopo));
+          initNav();
+          initTopoHTML(results);
+          console.log(results);
+       });
+        
+        arrayOfTopos=results;
+      });
+      
+      var currentTopoView
+      
+      function initNav(){
+      currentTopoView=arrayOfTopos.length-1;
+      if (currentTopoView==0)
+        document.getElementById("prevtopo").disabled=document.getElementById("nexttopo").disabled=true;
+        
+        refreshHTML();
+        const routeName =document.getElementById('routename');
+        const ver =document.getElementById('version');
+            
+        routeName.value= arrayOfTopos[arrayOfTopos.length-1].ClimbName;
+        ver.value= arrayOfTopos.length+1;
+     
+      }
+      function refreshHTML(){
+      document.getElementById("routenameheader").innerHTML = arrayOfTopos[currentTopoView].ClimbName;
+      document.getElementById("verheader").innerHTML = "Version: "+arrayOfTopos[currentTopoView].Version;
+      document.getElementById("name").innerHTML = "Last edited by: "+arrayOfTopos[currentTopoView].Name+" On "+arrayOfTopos[currentTopoView].Time;
+       document.getElementById("beta").value=arrayOfTopos[currentTopoView].Notes;
+   
+
+
+      document.getElementById("nexttopo").disabled = true;
+
+      }
+      
+      function previousTopo(){
+       currentTopoView--;
+       lc.loadSnapshot(JSON.parse(arrayOfTopos[currentTopoView].JSONtopo));
+       refreshHTML();
+          if (currentTopoView==0)
+             document.getElementById("prevtopo").disabled = true;
+          else
+             document.getElementById("prevtopo").disabled = false;
+          if (currentTopoView==arrayOfTopos.length-1)
+             document.getElementById("nexttopo").disabled = true;
+          else
+             document.getElementById("nexttopo").disabled = false;
+      }
+     
+     
+      function nextTopo(){
+        currentTopoView++;
+        lc.loadSnapshot(JSON.parse(arrayOfTopos[currentTopoView].JSONtopo));
+        refreshHTML();
+          if (currentTopoView==arrayOfTopos.length-1)
+            document.getElementById("nexttopo").disabled = true;
+          else
+            document.getElementById("nexttopo").disabled = false;
+          if (currentTopoView==0)
+            document.getElementById("prevtopo").disabled = true;
+          else
+            document.getElementById("prevtopo").disabled = false;
+          }
+          
+    
+    </script> 
+   
+    <div>
+    <button id=prevtopo onclick="previousTopo()">Previous Version</button>
+    <button id=nexttopo onclick="nextTopo()" >Next Version</button>
+    </div>  
+    <div id="contact">
+      
+    <form action="https://84113db646b54538946028a66c8c1196.vfs.cloud9.us-west-2.amazonaws.com/savenewtopo" method="post">
+       
+      <fieldset>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" />
+
+        <label for="notes">Notes and Changes</label>
+        <textarea name="notes" rows="10" cols="30" id="beta"></textarea>
+
+        <label for="json" class="hidden">don't touch</label>
+        <input id="topoTarget" class="hidden" type="textarea" name="topojson"/>
+        
+        <label for="routename" class="hidden">don't touch</label>
+        <input id="routename" class="hidden" type="textarea" name="route"/>
+        
+        <label for="version" class="hidden">don't touch</label>
+        <input id="version" class="hidden" type="textarea" name="ver"/>
+
+        <input id="submitTopo" type="submit" value="Submit Topo" />
+
+      </fieldset>
+      </form>
+      <div id="status"></div>
+       <script type="text/javascript">
+        // hack to save drawing json string
+        // by changing the value of a hidden form field every second.
+        $('#lc').ready(function() {
+          const setTopo = function() {
+            const topoTarget = document.getElementById('topoTarget');
+            topoTarget.value = JSON.stringify(lc.getSnapshot(['shapes', 'imageSize', 'colors', 'position', 'scale', 'backgroundShapes']));
+          };
+          setInterval(setTopo, 1000);
+          
+        });
+
+       
+        // adding an event listener would make more sense
+        //just didn't figure it out yet
+        const submitTopo = document.getElementById('submitTopo');
+        //submitTopo.addEventListener('click', setTopo);
+       </script>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
