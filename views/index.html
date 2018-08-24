@@ -3,57 +3,11 @@
   <head>
     <title>Literally Canvas</title>
     <link href="literallycanvas.css" rel="stylesheet" type="text/css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <style type="text/css">
-      .hidden {
-        display: none;
-      }
-    
-      .fs-container {
-        width: 320px;
-        margin: auto;
-      }
-
-      .literally {
-        width: 100%;
-        height: 100%;
-        position: relative;
-      }
-      
-      form {
-        width: 100px;
-      }
-      
-      input {
-        display: block;
-        margin-bottom: 10px;
-        padding: 5px;
-        width: 100%;
-        border: 1px solid lightgrey;
-        border-radius: 3px;
-        font-size: 16px;
-      }
-      
-      button {
-        font-size: 16px;
-        border-radius: 3px;
-        background-color: lightgrey;
-        border: 1px solid grey;
-        box-shadow: 2px 2px teal;
-        cursor: pointer;
-      }
-      
-      button:hover {
-        background-color: yellow;
-      }
-      
-      button:active {
-        box-shadow: none;
-      }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   </head>
 
   <body>
@@ -64,107 +18,123 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js" type="text/javascript"></script>
     <script type="text/javascript" src="literallycanvas.js"  type="text/javascript"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
     
-    <div class="fs-container">
-      <div id="lc"></div>
-    </div>
-    <script type="text/javascript">
-      function getUrlVars() {
-          topoVars = {};
-          var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-          topoVars[key] = value;
-      });
-      return topoVars;
-    }
-    var urlTopoVars = getUrlVars();
     
-    var testRes;
+    <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h4 class="text-white">Welcome!</h4>
+              <p class="text-muted">The information on this site is purely user maintained and may not be accurate. </p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-4">
+              <h4 class="text-white">Contact</h4>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-white">Follow on Twitter</a></li>
+                <li><a href="#" class="text-white">Like on Facebook</a></li>
+                <li><a href="#" class="text-white">Email me</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <a href="/#" class="navbar-brand d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <strong>MamaTopos</strong>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <main role="main">
 
-    
-    
-      if(!urlTopoVars){
-        var lc = LC.init(document.getElementById("lc"), {
-            keyboardShortcuts: false,
-            tools: [LC.tools.Pencil, LC.tools.Eraser, LC.tools.Line,
-            LC.tools.Text, LC.tools.Pan],
-           imageURLPrefix: 'lc-images',
-           toolbarPosition: 'bottom',
-           defaultStrokeWidth: 1,
-           strokeWidths: [1]
-       });
-      }
-      else{
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">MamaTopos</h1>
+          <p class="lead text-muted">Find the best Topos for your climbs. Whether Boldering or going Free Solo you can use MamaTopos to find the best Topos that have been used an iterated upon by our community. Once you've been on a climb using a Topo come back and rate it or edit it if you think you could improve it. <span class="call-to-action"><b>Help make the best topo maps ever.</b></span></p>
+          <p>
+            <a href="/newclimb" class="btn btn-primary my-2">Create a new topo</a>
+            <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+          </p>
+        </div>
+      </section>
 
-         var lc = LC.init(document.getElementById("lc"), {
-            keyboardShortcuts: false,
-            tools: [LC.tools.Pencil, LC.tools.Eraser, LC.tools.Line,
-            LC.tools.Text, LC.tools.Pan],
-           imageURLPrefix: 'lc-images',
-           toolbarPosition: 'bottom',
-           defaultStrokeWidth: 1,
-           strokeWidths: [1]
-       });
-       // get data from server
-        fetch('topo/'+urlTopoVars.id+'/version/'+urlTopoVars.v)
-        .then(function(response) {
-          testRes = response;
-          console.log('here we go', response);
-          return response.json();
-        })
-        .then(function(data){
-          // get ref to topo json file
-          // $('lc').ready
-          console.log(data);
-          testRes = data;
-          $('lc').ready(function() {
-            lc.loadSnapshot(JSON.parse(data.JSONtopo.S));
-          });
-        });
-      }
-        
-    </script> 
-  
-    <div id="contact">
-      
-    <form action="https://84113db646b54538946028a66c8c1196.vfs.cloud9.us-west-2.amazonaws.com/savetopo" method="post">
-         
-          <fieldset>
-              <label for="name">Name:</label>
-              <input type="text" id="name" name="name" placeholder="Enter your full name" />
-  
-              <label for="routename">routename</label>
-              <input type="text" id="routename" name="routename" placeholder="Enter the route name" />
+      <div class="album py-5 bg-light">
+        <div class="container">
 
+          <div class="row">
               
-              <label for="json" class="hidden">topojson</label>
-              <input id="topoTarget"  type="textarea" name="topojson"/>
-  
-              <input id="submitTopo" type="submit" value="Submit Topo" />
-  
-          </fieldset>
-      </form>
+            <div class="col-md-4">
+              <div class="card mb-4 shadow-sm">
+                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
+                <div class="card-body">
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+
+            <div class="col-md-4">
+              <div class="card mb-4 shadow-sm">
+                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
+                <div class="card-body">
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    
+    
+    <script type="text/javascript" src="/js/drawing.js"></script> 
+
       <div id="status"></div>
        <script type="text/javascript">
-      //   // hack to save drawing json string
-      //   // by changing the value of a hidden form field every second.
-      //   $('#lc').ready(function() {
-      //   const getTopo = () => JSON.stringify(lc.getSnapshot(['shapes', 'imageSize', 'colors', 'position', 'scale', 'backgroundShapes']));
-        
-      //     const setTopo = function() {
-      //     const topoTarget = document.getElementById('topoTarget');
-      //     topoTarget.value = getTopo();
-      //   }
-      //   setInterval(setTopo, 1000);
+        // hack to save drawing json string
+        // by changing the value of a hidden form field every second.
+        $('#lc').ready(function() {
+          const setTopo = function() {
+            const topoTarget = document.getElementById('topoTarget');
+            topoTarget.value = JSON.stringify(lc.getSnapshot(['shapes', 'imageSize', 'colors', 'position', 'scale', 'backgroundShapes']));
+            
+          };
+          setInterval(setTopo, 1000);
+          // adding an event listener would make more sense
+          //just didn't figure it out yet
+          /*const submitTopo = document.getElementById('submitTopo');
+          submitTopo.addEventListener('click', setTopo);*/
           
-      //   })
-
-       
-      //   // adding an event listener would make more sense
-      //   // just didn't figure it out yet
-      //   // const submitTopo = document.getElementById('submitTopo');
-      //   // submitTopo.addEventListener('click', setTopo);
+        });
        </script>
-      <div>
+      <!-- bootstrap js -->
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="/js/index.js"></script>
   </body>
 </html>

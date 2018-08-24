@@ -33,14 +33,19 @@ let CreateTopoPrev = function(data) { // album html chunk
 let climbNumber = 1,
     version = 1;
 
+const testData = {
+  climbid: '1',
+  version: '1'
+};
 
-
-let getTopoRequest = new Request(domain + '/getTopo?climbNumber=' + climbNumber + '&version=' + version,{
+let getTopoRequest = new Request(`/topo/${testData.climbid}/version/${testData.version}`,{
   method: 'GET',
 });
 
 fetch(getTopoRequest).then(function(res) {
-  console.log(res);
+  return res.json();
+}).then(function(json) {
+  console.log(json);
 });
 
 
